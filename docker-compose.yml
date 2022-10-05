@@ -11,7 +11,7 @@ services:
     volumes:
       - ./config:/config
       - ./default.conf:/config/nginx/site-confs/default.conf
-      - ./wordpress.conf:/config/nginx/proxy-confs/wordpress.subfolder.conf
+      - ./wordpress.subfolder.conf:/config/nginx/proxy-confs/wordpress.subfolder.conf
     environment:
       - EMAIL=email@example.com
       - URL=example.com
