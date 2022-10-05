@@ -1,25 +1,29 @@
 version: '3.3'
-
 services:
 
   swag:
-    image: linuxserver/swag
+    image: lscr.io/linuxserver/swag
     container_name: swag
+    cap_add:
+      - NET_ADMIN
     depends_on:
       - wordpress
     volumes:
       - ./config:/config
-      - ./default:/config/nginx/site-confs/default
+      - ./default.conf:/config/nginx/site-confs/default.conf
+      - ./wordpress.conf:/config/nginx/proxy-confs/wordpress.subfolder.conf
     environment:
       - EMAIL=email@example.com
-      - URL=www.example.com
+      - URL=example.com
+      - SUBDOMAINS=www,
       - VALIDATION=http
-      - TZ=Europe/London
-      - PUID=500
-      - PGID=500
+      - TZ=America/Los_Angeles
+      - PUID=1001
+      - PGID=1002
     ports:
       - "443:443"
       - "80:80"
+    restart: always
 
   wordpress:
     image: wordpress:latest
@@ -27,9 +31,6 @@ services:
     hostname: wordpress
     depends_on:
       - db
-    restart: always
-    ports:
-      - "8080:80"
     volumes:
       - /var/www/html/example/wp-content:/var/www/html/wp-content
       - /var/www/html/example/custom.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -40,17 +41,20 @@ services:
       WORDPRESS_DB_NAME: wp_db_name
       WORDPRESS_CONFIG_EXTRA: |
         define( 'WP_MEMORY_LIMIT', '96M' );
+    ports:
+      - "8080:80"
+    restart: always
 
   db:
     image: mysql:5.7
     container_name: db
     volumes:
       - /var/lib/mysql:/var/lib/mysql
-    restart: always
-    ports:
-      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: mysql_root_pass
       MYSQL_DATABASE: wp_db_name
       MYSQL_USER: wp_db_user
       MYSQL_PASSWORD: wp_db_pass
+    ports:
+      - "3306:3306"   
+    restart: always
