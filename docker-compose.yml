@@ -32,8 +32,8 @@ services:
     depends_on:
       - db
     volumes:
-      - /var/www/html/example/wp-content:/var/www/html/wp-content
-      - /var/www/html/example/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./www:/var/www/html
+      - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wp_db_user
